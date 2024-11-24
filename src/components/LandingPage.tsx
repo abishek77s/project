@@ -1,6 +1,13 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { History, Upload, Globe, Clock, PieChart, Calendar } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  History,
+  Upload,
+  Globe,
+  Clock,
+  PieChart,
+  Calendar,
+} from "lucide-react";
 
 interface LandingPageProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -10,23 +17,23 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
   const features = [
     {
       icon: Globe,
-      title: 'Website Analytics',
-      description: 'Discover your most visited websites and browsing patterns',
+      title: "Website Analytics",
+      description: "Discover your most visited websites and browsing patterns",
     },
     {
       icon: Clock,
-      title: 'Time Insights',
-      description: 'Understand your daily browsing rhythms and peak hours',
+      title: "Time Insights",
+      description: "Understand your daily browsing rhythms and peak hours",
     },
     {
       icon: PieChart,
-      title: 'Category Breakdown',
-      description: 'See how you spend time across different website categories',
+      title: "Category Breakdown",
+      description: "See how you spend time across different website categories",
     },
     {
       icon: Calendar,
-      title: 'Yearly Overview',
-      description: 'Visualize your browsing habits throughout the year',
+      title: "Yearly Overview",
+      description: "Visualize your browsing habits throughout the year",
     },
   ];
 
@@ -43,26 +50,33 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
             <History className="w-20 h-20 mx-auto mb-6 text-white/90" />
             <h1 className="text-5xl font-bold mb-4">Your Browser Story</h1>
             <p className="text-xl text-white/80 mb-8 max-w-2xl mx-auto">
-              Transform your browsing history into beautiful insights. Upload your history file and discover your digital journey.
+              Transform your browsing history into beautiful insights. Upload
+              your history file and discover your digital journey.
             </p>
 
             <div className="flex flex-col items-center gap-4">
               <label className="inline-flex items-center px-8 py-4 bg-white text-indigo-600 rounded-full cursor-pointer hover:bg-white/90 transition-colors font-medium shadow-lg hover:shadow-xl">
                 <Upload className="w-5 h-5 mr-2" />
                 Choose History File
-                <input type="file" accept=".csv,.txt" onChange={onFileUpload} className="hidden" />
+                <input
+                  type="file"
+                  accept=".csv,.txt"
+                  onChange={onFileUpload}
+                  className="hidden"
+                />
               </label>
               <p className="text-sm text-white/70">
-                Supports Chrome (with{' '}
+                To get your history file , use this (
                 <a
                   href="https://chromewebstore.google.com/detail/export-chrome-history/dihloblpkeiddiaojbagoecedbfpifdj"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-white"
                 >
-                  extension
-                </a>
-                ) and Edge browser history exports
+                  extension),
+                </a>{" "}
+                Microsoft Edge users can directly export their history from
+                settings.
               </p>
             </div>
           </motion.div>
@@ -92,7 +106,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center text-white/60 text-sm"
         >
-          <p>Your privacy matters! All processing happens locally in your browser.</p>
+          <p>
+            Your privacy matters! All processing happens locally in your
+            browser.
+          </p>
           <p>No data is ever uploaded or stored on any server.</p>
         </motion.div>
       </div>

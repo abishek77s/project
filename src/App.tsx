@@ -38,7 +38,8 @@ function App() {
       try {
         const content = e.target?.result as string;
         const lines = content.split("\n").filter((line) => line.trim());
-        const isChrome = lines[0].includes("order") && lines[0].includes("visitCount");
+        const isChrome =
+          lines[0].includes("order") && lines[0].includes("visitCount");
         const records: BrowsingRecord[] = [];
         const dataLines = lines.slice(1);
 
@@ -51,7 +52,12 @@ function App() {
             const titleIndex = headerColumns.indexOf("title");
             const urlIndex = headerColumns.indexOf("url");
 
-            if (dateIndex !== -1 && timeIndex !== -1 && titleIndex !== -1 && urlIndex !== -1) {
+            if (
+              dateIndex !== -1 &&
+              timeIndex !== -1 &&
+              titleIndex !== -1 &&
+              urlIndex !== -1
+            ) {
               records.push({
                 dateTime: `${columns[dateIndex]} ${columns[timeIndex]}`,
                 navigatedToUrl: columns[urlIndex],
@@ -61,7 +67,9 @@ function App() {
           });
         } else {
           dataLines.forEach((line) => {
-            const [dateTime, navigatedToUrl, pageTitle] = line.split(",").map((col) => col.trim());
+            const [dateTime, navigatedToUrl, pageTitle] = line
+              .split(",")
+              .map((col) => col.trim());
             records.push({ dateTime, navigatedToUrl, pageTitle });
           });
         }
@@ -73,7 +81,9 @@ function App() {
         }, 1500);
       } catch (error) {
         console.error("Error parsing file:", error);
-        alert("Error parsing file. Please ensure it's in the correct format (Edge or Chrome history export).");
+        alert(
+          "Error parsing file. Please ensure it's in the correct format (Edge or Chrome history export)."
+        );
       }
     };
     reader.readAsText(file);
@@ -110,17 +120,21 @@ function App() {
         finalCanvas = newCanvas;
       }
 
-      finalCanvas.toBlob((blob) => {
-        if (!blob) return;
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement("a");
-        link.href = url;
-        link.download = `browsing-insights-${currentSlide}-${type}.png`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }, "image/png", 1.0);
+      finalCanvas.toBlob(
+        (blob) => {
+          if (!blob) return;
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement("a");
+          link.href = url;
+          link.download = `browsing-insights-${currentSlide}-${type}.png`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          URL.revokeObjectURL(url);
+        },
+        "image/png",
+        1.0
+      );
     } catch (error) {
       console.error("Error saving image:", error);
     }
@@ -149,7 +163,9 @@ function App() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
         <div className="text-center">
           <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-2xl font-medium text-white">Creating Your Story...</p>
+          <p className="text-2xl font-medium text-white">
+            Creating Your Story...
+          </p>
         </div>
       </div>
     );
@@ -164,8 +180,12 @@ function App() {
         <SlideContainer currentSlide={currentSlide}>
           {currentSlide === "overview" && (
             <div className="text-center space-y-12 px-4">
-              <h2 className="text-5xl font-bold text-white mb-12">Your Year in Browsing</h2>
-              <div className="text-8xl font-bold text-white mb-4">{analytics?.totalVisits || 0}</div>
+              <h2 className="text-5xl font-bold text-white mb-12">
+                Your Year in Browsing
+              </h2>
+              <div className="text-8xl font-bold text-white mb-4">
+                {analytics?.totalVisits || 0}
+              </div>
               <p className="text-2xl text-white/80">web pages visited</p>
               <div className="text-4xl font-bold text-white/90 mt-8">
                 {analytics?.uniqueDomains.toLocaleString()}
@@ -176,36 +196,52 @@ function App() {
 
           {currentSlide === "topSites" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">Your Top Destinations</h2>
+              <h2 className="text-4xl font-bold text-white mb-12">
+                Your Top Destinations
+              </h2>
               <WebsiteAnalytics stats={analytics?.domainStats || []} />
             </div>
           )}
 
           {currentSlide === "categories" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">Your Internet Universe</h2>
+              <h2 className="text-4xl font-bold text-white mb-12">
+                Your Internet Universe
+              </h2>
               <CategoryChart stats={analytics?.categoryStats || []} />
             </div>
           )}
 
           {currentSlide === "patterns" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">Your Daily Rhythms</h2>
+              <h2 className="text-4xl font-bold text-white mb-12">
+                Your Daily Rhythms
+              </h2>
               <TimePatterns stats={analytics?.timeStats || []} />
             </div>
           )}
 
           {currentSlide === "yearly" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">Your Year at a Glance</h2>
+              <h2 className="text-4xl font-bold text-white mb-12">
+                Your Year at a Glance
+              </h2>
               <YearlyHeatmap stats={analytics?.dailyStats || []} />
             </div>
           )}
 
           {currentSlide === "gems" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">Rediscover These Gems</h2>
-              <HiddenGems gems={analytics?.domainStats.filter((site) => site.visits === 1).slice(0, 5) || []} />
+              <h2 className="text-4xl font-bold text-white mb-12">
+                Rediscover These Gems
+              </h2>
+              <HiddenGems
+                gems={
+                  analytics?.domainStats
+                    .filter((site) => site.visits === 1)
+                    .slice(0, 5) || []
+                }
+              />
             </div>
           )}
         </SlideContainer>
