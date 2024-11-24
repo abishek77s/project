@@ -216,8 +216,9 @@ function App() {
           <p className="text-white/80 mb-6">
             Upload your browsing history to see your year in review
           </p>
-          <label className="inline-flex items-center px-6 py-3 bg-white text-indigo-600 rounded-full cursor-pointer hover:bg-white/90 transition-colors font-medium">
-            <Upload className="w-5 h-5 mr-2" />
+
+          <label className="inline-flex items-center px-6 py-3 mb-6 bg-white text-indigo-600 rounded-full cursor-pointer hover:bg-white/90 transition-colors font-medium">
+            <Upload className="w-5 h-5 mr-2 " />
             Choose File
             <input
               type="file"
@@ -226,6 +227,20 @@ function App() {
               className="hidden"
             />
           </label>
+          <p className="text-white/80 ">
+            It must be a csv file, use{" "}
+            {
+              <a
+                className="underline"
+                target="_blank"
+                href="https://chromewebstore.google.com/detail/export-chrome-history/dihloblpkeiddiaojbagoecedbfpifdj"
+              >
+                extension
+              </a>
+            }{" "}
+            if you're on Chrome and other browsers, Edge supports history export
+            without extension on history settings.
+          </p>
         </motion.div>
       </div>
     );

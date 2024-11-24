@@ -17,7 +17,10 @@ interface YearlyHeatmapProps {
 }
 
 const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
-  const [hoveredDay, setHoveredDay] = useState<{ stats: DailyStats; rect: DOMRect } | null>(null);
+  const [hoveredDay, setHoveredDay] = useState<{
+    stats: DailyStats;
+    rect: DOMRect;
+  } | null>(null);
 
   const maxVisits = Math.max(...stats.map((day) => day.visits));
 
@@ -33,7 +36,10 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
     });
   };
 
-  const handleDayHover = (day: DailyStats, event: React.MouseEvent<HTMLDivElement>) => {
+  const handleDayHover = (
+    day: DailyStats,
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setHoveredDay({ stats: day, rect });
   };
@@ -91,12 +97,12 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
         </div>
 
         {hoveredDay && (
-          <div 
+          <div
             className="fixed bg-gray-800 text-white rounded-lg text-sm z-50 p-3 shadow-xl"
             style={{
               top: hoveredDay.rect.top - 120,
               left: hoveredDay.rect.left + hoveredDay.rect.width / 2,
-              transform: 'translateX(-50%)',
+              transform: "translateX(-50%)",
             }}
           >
             <div className="font-medium mb-1">

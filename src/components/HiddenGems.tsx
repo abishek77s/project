@@ -8,6 +8,7 @@ interface HiddenGemsProps {
 }
 
 export const HiddenGems: React.FC<HiddenGemsProps> = ({ gems }) => {
+  console.log(gems.map((g) => g.domain));
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg">
       <div className="flex items-center gap-2 mb-6">
@@ -27,7 +28,11 @@ export const HiddenGems: React.FC<HiddenGemsProps> = ({ gems }) => {
             transition={{ duration: 0.5, delay: index * 0.1 }}
             className="bg-gradient-to-br from-indigo-50 to-white p-4 rounded-lg border border-indigo-100"
           >
-            <a href={gem.domain} target="_blank">
+            <a
+              href={`https://${gem.domain}`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               <div className="flex items-center justify-between">
                 <h4 className="text-lg font-medium text-gray-800">
                   {gem.domain}
