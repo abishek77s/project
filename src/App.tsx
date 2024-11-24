@@ -51,13 +51,53 @@ function App() {
     reader.onload = (e) => {
       try {
         const content = e.target?.result as string;
-        const records = content
-          .split("\n")
-          .filter((line) => line.trim())
-          .map((line) => {
-            const [dateTime, navigatedToUrl, pageTitle] = line.split(",");
-            return { dateTime, navigatedToUrl, pageTitle };
+        const lines = content.split("\n").filter((line) => line.trim());
+
+        // Detect format by checking the first line (header)
+        const isChrome =
+          lines[0].includes("order") && lines[0].includes("visitCount");
+        const records: BrowsingRecord[] = [];
+
+        // Skip header row
+        const dataLines = lines.slice(1);
+
+        if (isChrome) {
+          // Process Chrome format
+          dataLines.forEach((line) => {
+            const columns = line.split(",").map((col) => col.trim());
+            // Find column indices from header
+            const headerColumns = lines[0].split(",").map((col) => col.trim());
+            const dateIndex = headerColumns.indexOf("date");
+            const timeIndex = headerColumns.indexOf("time");
+            const titleIndex = headerColumns.indexOf("title");
+            const urlIndex = headerColumns.indexOf("url");
+
+            if (
+              dateIndex !== -1 &&
+              timeIndex !== -1 &&
+              titleIndex !== -1 &&
+              urlIndex !== -1
+            ) {
+              records.push({
+                dateTime: `${columns[dateIndex]} ${columns[timeIndex]}`,
+                navigatedToUrl: columns[urlIndex],
+                pageTitle: columns[titleIndex],
+              });
+            }
           });
+        } else {
+          // Process Edge format
+          dataLines.forEach((line) => {
+            const [dateTime, navigatedToUrl, pageTitle] = line
+              .split(",")
+              .map((col) => col.trim());
+            records.push({
+              dateTime,
+              navigatedToUrl,
+              pageTitle,
+            });
+          });
+        }
 
         setIsAnalyzing(true);
         setTimeout(() => {
@@ -66,12 +106,13 @@ function App() {
         }, 1500);
       } catch (error) {
         console.error("Error parsing file:", error);
-        alert("Error parsing file. Please ensure it's in the correct format.");
+        alert(
+          "Error parsing file. Please ensure it's in the correct format (Edge or Chrome history export)."
+        );
       }
     };
     reader.readAsText(file);
   };
-
   const handleDownload = async (type: "desktop" | "mobile") => {
     if (!slideRef.current) return;
 
