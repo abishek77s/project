@@ -1,15 +1,23 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { History, Upload, ArrowRight, ArrowLeft, Download } from "lucide-react";
+import {
+  History,
+  Upload,
+  ArrowRight,
+  ArrowLeft,
+  Download,
+  Share2,
+} from "lucide-react";
 import { BrowsingRecord } from "./types";
 import { analyzeBrowsingHistory } from "./utils/analytics";
+import html2canvas from "html2canvas";
 
-import { DomainChart } from "./components/DomainChart";
+import { WebsiteAnalytics } from "./components/WebsiteAnalytics";
 import { TimePatterns } from "./components/TimePatterns";
 import { CategoryChart } from "./components/CategoryChart";
 import YearlyHeatmap from "./components/YearlyHeatmap";
-import { MediaInsights } from "./components/MediaInsights";
-import html2canvas from "html2canvas";
+
+import { HiddenGems } from "./components/HiddenGems";
 
 const SLIDES = [
   "overview",
@@ -18,6 +26,7 @@ const SLIDES = [
   "categories",
   "patterns",
   "yearly",
+  "gems",
 ] as const;
 
 type SlideType = (typeof SLIDES)[number];
@@ -26,7 +35,14 @@ function App() {
   const [history, setHistory] = useState<BrowsingRecord[]>([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [currentSlide, setCurrentSlide] = useState<SlideType>("overview");
+  const [showNav, setShowNav] = useState(true);
   const slideRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    setShowNav(false);
+    const timer = setTimeout(() => setShowNav(true), 1000);
+    return () => clearTimeout(timer);
+  }, [currentSlide]);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -57,23 +73,44 @@ function App() {
     reader.readAsText(file);
   };
 
-  const handleDownload = async () => {
+  const handleDownload = async (type: "desktop" | "mobile") => {
     if (!slideRef.current) return;
 
     try {
+      const scale = type === "desktop" ? 2 : 3;
       const canvas = await html2canvas(slideRef.current, {
         backgroundColor: null,
-        scale: 2,
+        scale,
         logging: false,
       });
 
-      canvas.toBlob(
+      const aspectRatio = type === "mobile" ? 1.91 : undefined;
+      let finalCanvas = canvas;
+
+      if (aspectRatio) {
+        const newCanvas = document.createElement("canvas");
+        const ctx = newCanvas.getContext("2d");
+        if (!ctx) return;
+
+        const targetHeight = canvas.width / aspectRatio;
+        newCanvas.width = canvas.width;
+        newCanvas.height = targetHeight;
+
+        ctx.fillStyle = "#4F46E5";
+        ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+
+        const yOffset = (targetHeight - canvas.height) / 2;
+        ctx.drawImage(canvas, 0, yOffset);
+        finalCanvas = newCanvas;
+      }
+
+      finalCanvas.toBlob(
         (blob) => {
           if (!blob) return;
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
-          link.download = `browsing-insights-${currentSlide}.png`;
+          link.download = `browsing-insights-${currentSlide}-${type}.png`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -86,8 +123,6 @@ function App() {
       console.error("Error saving image:", error);
     }
   };
-
-  const analytics = history.length > 0 ? analyzeBrowsingHistory(history) : null;
 
   const nextSlide = () => {
     const currentIndex = SLIDES.indexOf(currentSlide);
@@ -104,13 +139,26 @@ function App() {
   };
 
   const calculateTimeSpent = () => {
-    const avgTimePerVisit = 2; // minutes
-    const totalMinutes = analytics?.totalVisits
-      ? analytics.totalVisits * avgTimePerVisit
-      : 0;
-    const days = Math.floor(totalMinutes / (24 * 60));
-    const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
-    return { days, hours };
+    if (!analytics?.domainStats) return { days: 0, hours: 0 };
+
+    const totalVisits = analytics.domainStats.reduce(
+      (sum, site) => sum + site.visits,
+      0
+    );
+    const avgMinutesPerVisit = 3;
+    const totalMinutes = totalVisits * avgMinutesPerVisit;
+
+    return {
+      days: Math.floor(totalMinutes / (24 * 60)),
+      hours: Math.floor((totalMinutes % (24 * 60)) / 60),
+    };
+  };
+
+  const getHiddenGems = () => {
+    if (!analytics?.domainStats) return [];
+    return analytics.domainStats
+      .filter((site) => site.visits === 1)
+      .slice(0, 5);
   };
 
   if (!history.length) {
@@ -160,7 +208,9 @@ function App() {
     );
   }
 
+  const analytics = history.length > 0 ? analyzeBrowsingHistory(history) : null;
   const timeSpent = calculateTimeSpent();
+  const hiddenGems = getHiddenGems();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600">
@@ -227,6 +277,15 @@ function App() {
                   That's about {timeSpent.days} days and {timeSpent.hours} hours
                   of browsing!
                 </motion.div>
+
+                {hiddenGems.length > 0 && (
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.8 }}
+                    className="mt-12"
+                  ></motion.div>
+                )}
               </div>
             )}
 
@@ -239,30 +298,7 @@ function App() {
                 >
                   Your Top Destinations
                 </motion.h2>
-                <DomainChart stats={analytics?.domainStats || []} />
-              </div>
-            )}
-
-            {currentSlide === "media" && (
-              <div className="text-center space-y-8">
-                <motion.h2
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  className="text-4xl font-bold text-white mb-12"
-                >
-                  Your Media Journey
-                </motion.h2>
-                <MediaInsights
-                  videoCategories={analytics?.videoCategories || []}
-                  mediaStats={
-                    analytics?.mediaStats || {
-                      movies: [],
-                      anime: [],
-                      topVideos: [],
-                    }
-                  }
-                  onShare={handleDownload}
-                />
+                <WebsiteAnalytics stats={analytics?.domainStats || []} />
               </div>
             )}
 
@@ -304,43 +340,74 @@ function App() {
                 <YearlyHeatmap stats={analytics?.dailyStats || []} />
               </div>
             )}
+
+            {currentSlide === "gems" && (
+              <div className="text-center space-y-8">
+                <motion.h2
+                  initial={{ y: 20, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  className="text-4xl font-bold text-white mb-12"
+                >
+                  Rediscover These Gems
+                </motion.h2>
+                <HiddenGems gems={getHiddenGems()} />
+              </div>
+            )}
           </div>
         </motion.div>
       </AnimatePresence>
 
-      <div className="fixed bottom-8 left-0 right-0 flex justify-between items-center px-8 max-w-4xl mx-auto">
-        <button
-          onClick={prevSlide}
-          disabled={currentSlide === "overview"}
-          className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
-            currentSlide === "overview"
-              ? "bg-white/20 text-white/40 cursor-not-allowed"
-              : "bg-white text-indigo-600 hover:bg-white/90"
-          }`}
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Previous
-        </button>
-        <button
-          onClick={handleDownload}
-          className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-          title="Download this insight"
-        >
-          <Download className="w-5 h-5" />
-        </button>
-        <button
-          onClick={nextSlide}
-          disabled={currentSlide === "yearly"}
-          className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
-            currentSlide === "yearly"
-              ? "bg-white/20 text-white/40 cursor-not-allowed"
-              : "bg-white text-indigo-600 hover:bg-white/90"
-          }`}
-        >
-          Next
-          <ArrowRight className="w-5 h-5" />
-        </button>
-      </div>
+      <AnimatePresence>
+        {showNav && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            className="fixed bottom-8 left-0 right-0 flex justify-between items-center px-8 max-w-4xl mx-auto"
+          >
+            <button
+              onClick={prevSlide}
+              disabled={currentSlide === "overview"}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
+                currentSlide === "overview"
+                  ? "bg-white/20 text-white/40 cursor-not-allowed"
+                  : "bg-white text-indigo-600 hover:bg-white/90"
+              }`}
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Previous
+            </button>
+            <div className="flex gap-2">
+              <button
+                onClick={() => handleDownload("desktop")}
+                className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                title="Download for Desktop"
+              >
+                <Download className="w-5 h-5" />
+              </button>
+              <button
+                onClick={() => handleDownload("mobile")}
+                className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                title="Download for Social Media"
+              >
+                <Share2 className="w-5 h-5" />
+              </button>
+            </div>
+            <button
+              onClick={nextSlide}
+              disabled={currentSlide === "gems"}
+              className={`flex items-center gap-2 px-6 py-3 rounded-full transition-colors ${
+                currentSlide === "gems"
+                  ? "bg-white/20 text-white/40 cursor-not-allowed"
+                  : "bg-white text-indigo-600 hover:bg-white/90"
+              }`}
+            >
+              Next
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
