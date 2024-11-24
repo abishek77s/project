@@ -22,7 +22,6 @@ import { HiddenGems } from "./components/HiddenGems";
 const SLIDES = [
   "overview",
   "topSites",
-  "media",
   "categories",
   "patterns",
   "yearly",
@@ -145,7 +144,7 @@ function App() {
       (sum, site) => sum + site.visits,
       0
     );
-    const avgMinutesPerVisit = 3;
+    const avgMinutesPerVisit = 5;
     const totalMinutes = totalVisits * avgMinutesPerVisit;
 
     return {
@@ -240,7 +239,7 @@ function App() {
                   transition={{ delay: 0.2 }}
                   className="text-8xl font-bold text-white mb-4"
                 >
-                  {Math.floor(analytics?.totalVisits || 0).toLocaleString()}
+                  {analytics?.totalVisits || 0}
                 </motion.div>
                 <motion.p
                   initial={{ y: 20, opacity: 0 }}
