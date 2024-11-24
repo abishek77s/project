@@ -111,6 +111,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
             browser.
           </p>
           <p>No data is ever uploaded or stored on any server.</p>
+
+          <p className="m-5">Web Wrapped.</p>
         </motion.div>
       </div>
     </div>
