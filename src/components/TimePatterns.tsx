@@ -78,7 +78,7 @@ export const TimePatterns: React.FC<TimePatternsProps> = ({ stats }) => {
         transition={{ duration: 0.8 }}
         className="mb-8 text-center"
       >
-        <div className="inline-flex items-center gap-2 mb-4">
+        <div className="inline-flex items-center gap-2 mb-2">
           {peakHour.hour >= 22 || peakHour.hour < 6 ? (
             <Moon className="w-8 h-8" />
           ) : peakHour.hour < 12 ? (
@@ -88,7 +88,7 @@ export const TimePatterns: React.FC<TimePatternsProps> = ({ stats }) => {
           ) : (
             <Sunset className="w-8 h-8" />
           )}
-          <h2 className="text-3xl font-bold">{persona.title}</h2>
+          <h2 className="text-3xl font-medium">{persona.title}</h2>
         </div>
         <p className="text-xl text-white/80 mb-4">{persona.desc}</p>
         <p className="text-4xl font-bold text-indigo-300 mb-2">
@@ -99,7 +99,7 @@ export const TimePatterns: React.FC<TimePatternsProps> = ({ stats }) => {
         </p>
       </motion.div>
 
-      <div className="relative h-64 mt-12">
+      <div className="relative h-64 mt-6">
         {stats.map((stat, index) => {
           const height = (stat.visits / maxVisits) * 100;
           const isPeakHour = stat.hour === peakHour.hour;
@@ -130,11 +130,17 @@ export const TimePatterns: React.FC<TimePatternsProps> = ({ stats }) => {
                   } opacity-0 group-hover:opacity-100 transition-opacity`}
                 />
               </div>
-              {index % 3 === 0 && (
-                <div className="absolute -bottom-6 left-1/2 -translate-x-1/2 transform text-xs text-white/80">
-                  {formatHour(stat.hour)}
-                </div>
-              )}
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                {index % 3 === 0 && (
+                  <div className="absolute -bottom-12 left-1/2 -translate-x-1/2 transform text-xs text-white/80 mt-16">
+                    {formatHour(stat.hour)}
+                  </div>
+                )}
+              </motion.div>
             </motion.div>
           );
         })}

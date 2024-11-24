@@ -1,16 +1,18 @@
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { CategoryStats } from '../types';
-import { FolderKanban } from 'lucide-react';
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { CategoryStats } from "../types";
+import { FolderKanban } from "lucide-react";
 
 interface CategoryChartProps {
   stats: CategoryStats[];
 }
 
 export const CategoryChart: React.FC<CategoryChartProps> = ({ stats }) => {
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(
+    "Other"
+  );
 
-  const selectedStats = stats.find(s => s.category === selectedCategory);
+  const selectedStats = stats.find((s) => s.category === selectedCategory);
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg">
@@ -27,12 +29,16 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ stats }) => {
             transition={{ duration: 0.3, delay: index * 0.1 }}
             className={`p-3 rounded-lg text-sm font-medium transition-colors ${
               selectedCategory === category.category
-                ? 'bg-indigo-600 text-white'
-                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                ? "bg-indigo-600 text-white"
+                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
             }`}
-            onClick={() => setSelectedCategory(
-              selectedCategory === category.category ? null : category.category
-            )}
+            onClick={() =>
+              setSelectedCategory(
+                selectedCategory === category.category
+                  ? null
+                  : category.category
+              )
+            }
           >
             {category.category}
             <div className="text-xs opacity-75">
@@ -46,7 +52,7 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ stats }) => {
         {selectedCategory && selectedStats && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
+            animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             className="overflow-hidden"
           >
@@ -64,7 +70,9 @@ export const CategoryChart: React.FC<CategoryChartProps> = ({ stats }) => {
                     className="flex justify-between items-center text-sm"
                   >
                     <span className="text-gray-700">{domain.domain}</span>
-                    <span className="text-gray-500">{domain.visits} visits</span>
+                    <span className="text-gray-500">
+                      {domain.visits} visits
+                    </span>
                   </motion.div>
                 ))}
               </div>

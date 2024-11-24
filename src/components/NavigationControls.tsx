@@ -1,6 +1,6 @@
 import React from "react";
-import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Download, Share2 } from "lucide-react";
+
+import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 
 interface NavigationControlsProps {
   currentSlide: string;
@@ -8,7 +8,7 @@ interface NavigationControlsProps {
   currentIndex: number;
   onNext: () => void;
   onPrev: () => void;
-  onDownload: (type: "desktop" | "mobile") => void;
+  onDownload: () => void;
 }
 
 export const NavigationControls: React.FC<NavigationControlsProps> = ({
@@ -21,21 +21,6 @@ export const NavigationControls: React.FC<NavigationControlsProps> = ({
 }) => {
   return (
     <>
-      {/* Top Actions */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="fixed top-8 right-8 flex gap-2"
-      >
-        <button
-          onClick={() => onDownload("mobile")}
-          className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
-          title="Download for Social Media"
-        >
-          <Download className="w-5 h-5" />
-        </button>
-      </motion.div>
-
       {/* Side Navigation */}
       <div className="fixed inset-y-0 left-8 flex items-center">
         <button
@@ -52,6 +37,13 @@ export const NavigationControls: React.FC<NavigationControlsProps> = ({
       </div>
 
       <div className="fixed inset-y-0 right-8 flex items-center">
+        <button
+          onClick={() => onDownload()}
+          className="p-3 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors mr-4"
+          title="Download for Social Media"
+        >
+          <Download className="w-6 h-6" />
+        </button>
         <button
           onClick={onNext}
           disabled={currentIndex === totalSlides - 1}

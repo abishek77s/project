@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Calendar } from "lucide-react";
 
 interface TopSite {
@@ -17,10 +17,9 @@ interface YearlyHeatmapProps {
 }
 
 const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
-  const [hoveredDay, setHoveredDay] = useState<{
-    stats: DailyStats;
-    rect: DOMRect;
-  } | null>(null);
+  const [hoveredDay, setHoveredDay] = useState<DailyStats | null>(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ top: 0, left: 0 });
+  const tooltipRef = useRef<HTMLDivElement>(null);
 
   const maxVisits = Math.max(...stats.map((day) => day.visits));
 
@@ -41,7 +40,14 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
     event: React.MouseEvent<HTMLDivElement>
   ) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    setHoveredDay({ stats: day, rect });
+    const tooltipHeight = tooltipRef.current?.offsetHeight || 0;
+
+    // Calculate position relative to the viewport
+    const top = rect.top - tooltipHeight - 10; // 10px offset from the square
+    const left = rect.left + rect.width / 2;
+
+    setTooltipPosition({ top, left });
+    setHoveredDay(day);
   };
 
   const statsByMonth = stats.reduce((acc, stat) => {
@@ -67,7 +73,7 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
         <div className="flex flex-wrap gap-6">
           {Object.entries(statsByMonth).map(([monthKey, monthStats]) => (
             <div key={monthKey} className="flex flex-col">
-              <h4 className="text-sm font-medium text-gray-600 mb-2">
+              <h4 className="text-sm font-semibold text-gray-600 mb-2">
                 {new Date(monthStats[0].date).toLocaleDateString("en-US", {
                   month: "long",
                   year: "numeric",
@@ -77,12 +83,12 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
                 {monthStats.map((day) => (
                   <div
                     key={day.date}
-                    className="relative aspect-square w-4"
+                    className="relative aspect-square w-4 group"
                     onMouseEnter={(e) => handleDayHover(day, e)}
                     onMouseLeave={() => setHoveredDay(null)}
                   >
                     <div
-                      className="w-full h-full rounded-sm cursor-pointer transition-all duration-200 hover:scale-110"
+                      className="w-full h-full rounded-sm cursor-pointer transition-all duration-200 group-hover:scale-110"
                       style={{
                         backgroundColor: `rgba(79, 70, 229, ${getOpacity(
                           day.visits
@@ -98,21 +104,22 @@ const YearlyHeatmap: React.FC<YearlyHeatmapProps> = ({ stats }) => {
 
         {hoveredDay && (
           <div
-            className="fixed bg-gray-800 text-white rounded-lg text-sm z-50 p-3 shadow-xl"
+            ref={tooltipRef}
+            className="fixed bg-gray-800 text-white rounded-lg text-sm z-50 p-3 shadow-xl pointer-events-none"
             style={{
-              top: hoveredDay.rect.top - 120,
-              left: hoveredDay.rect.left + hoveredDay.rect.width / 2,
+              top: tooltipPosition.top,
+              left: tooltipPosition.left,
               transform: "translateX(-50%)",
             }}
           >
             <div className="font-medium mb-1">
-              {formatDate(hoveredDay.stats.date)}
+              {formatDate(hoveredDay.date)}
             </div>
             <div className="text-gray-300 mb-2">
-              {hoveredDay.stats.visits} total visits
+              {hoveredDay.visits} total visits
             </div>
             <div className="space-y-1">
-              {hoveredDay.stats.topSites.map((site, index) => (
+              {hoveredDay.topSites.map((site, index) => (
                 <div
                   key={site.domain}
                   className="flex justify-between items-center"

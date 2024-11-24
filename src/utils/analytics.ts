@@ -1,4 +1,4 @@
-import { BrowsingRecord, DomainStats, TimeStats, DailyStats, CategoryStats, VideoStats, MediaStats } from '../types';
+import { BrowsingRecord, DomainStats, TimeStats, DailyStats, CategoryStats, VideoStats} from '../types';
 import { categorizeUrl, categorizeVideo } from './categories';
 
 export const getDomainFromUrl = (url: string): string => {

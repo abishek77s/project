@@ -1,19 +1,21 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Clock, Globe } from 'lucide-react';
-import { DomainStats } from '../types';
+import React from "react";
+import { motion } from "framer-motion";
+import { Clock, Globe } from "lucide-react";
+import { DomainStats } from "../types";
 
 interface WebsiteAnalyticsProps {
   stats: DomainStats[];
 }
 
-export const WebsiteAnalytics: React.FC<WebsiteAnalyticsProps> = ({ stats }) => {
+export const WebsiteAnalytics: React.FC<WebsiteAnalyticsProps> = ({
+  stats,
+}) => {
   const calculateTimeSpent = (visits: number) => {
     const avgMinutesPerVisit = 3;
     const totalMinutes = visits * avgMinutesPerVisit;
     const hours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-    
+
     if (hours === 0) return `${minutes}m`;
     if (minutes === 0) return `${hours}h`;
     return `${hours}h ${minutes}m`;
@@ -23,10 +25,12 @@ export const WebsiteAnalytics: React.FC<WebsiteAnalyticsProps> = ({ stats }) => 
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <Globe className="w-5 h-5 text-indigo-600" />
-          <h3 className="text-xl font-semibold text-gray-700">Your Digital Time</h3>
+          <h3 className="text-xl font-semibold text-gray-700">
+            Your Digital Time
+          </h3>
         </div>
         <Clock className="w-5 h-5 text-indigo-600" />
       </div>
@@ -42,7 +46,9 @@ export const WebsiteAnalytics: React.FC<WebsiteAnalyticsProps> = ({ stats }) => 
           >
             <div className="flex justify-between items-center mb-2">
               <div>
-                <span className="text-lg font-medium text-gray-800">{domain.domain}</span>
+                <span className="text-lg font-medium text-gray-800">
+                  {domain.domain}
+                </span>
                 <span className="ml-2 text-sm text-gray-500">
                   {domain.visits.toLocaleString()} visits
                 </span>
@@ -61,25 +67,10 @@ export const WebsiteAnalytics: React.FC<WebsiteAnalyticsProps> = ({ stats }) => 
             </div>
             <div className="mt-1 flex justify-between items-center text-xs text-gray-500">
               <span>{Math.round(domain.percentage)}% of total activity</span>
-              <span className="text-indigo-600">{domain.category}</span>
             </div>
           </motion.div>
         ))}
       </div>
-
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.8 }}
-        className="mt-6 pt-6 border-t border-gray-100"
-      >
-        <div className="text-sm text-gray-500 flex justify-between items-center">
-          <span>Total Tracked Time:</span>
-          <span className="text-indigo-600 font-medium">
-            {calculateTimeSpent(stats.reduce((sum, site) => sum + site.visits, 0))}
-          </span>
-        </div>
-      </motion.div>
     </div>
   );
 };

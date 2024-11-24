@@ -11,6 +11,7 @@ import { HiddenGems } from "./components/HiddenGems";
 import { SlideContainer } from "./components/SlideContainer";
 import { NavigationControls } from "./components/NavigationControls";
 import { LandingPage } from "./components/LandingPage";
+import { motion } from "framer-motion";
 
 const SLIDES = [
   "overview",
@@ -89,36 +90,35 @@ function App() {
     reader.readAsText(file);
   };
 
-  const handleDownload = async (type: "desktop" | "mobile") => {
+  const handleDownload = async () => {
     if (!slideRef.current) return;
 
     try {
-      const scale = type === "desktop" ? 2 : 3;
+      const scale = 3; // Only the mobile scale is used
       const canvas = await html2canvas(slideRef.current, {
         backgroundColor: null,
         scale,
         logging: false,
       });
 
-      const aspectRatio = type === "mobile" ? 1.91 : undefined;
+      const aspectRatio = 1.91; // Aspect ratio for mobile
       let finalCanvas = canvas;
 
-      if (aspectRatio) {
-        const newCanvas = document.createElement("canvas");
-        const ctx = newCanvas.getContext("2d");
-        if (!ctx) return;
+      // Adjust the canvas for mobile aspect ratio
+      const newCanvas = document.createElement("canvas");
+      const ctx = newCanvas.getContext("2d");
+      if (!ctx) return;
 
-        const targetHeight = canvas.width / aspectRatio;
-        newCanvas.width = canvas.width;
-        newCanvas.height = targetHeight;
+      const targetHeight = canvas.width / aspectRatio;
+      newCanvas.width = canvas.width;
+      newCanvas.height = targetHeight;
 
-        ctx.fillStyle = "#4F46E5";
-        ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
+      ctx.fillStyle = "#4F46E5";
+      ctx.fillRect(0, 0, newCanvas.width, newCanvas.height);
 
-        const yOffset = (targetHeight - canvas.height) / 2;
-        ctx.drawImage(canvas, 0, yOffset);
-        finalCanvas = newCanvas;
-      }
+      const yOffset = (targetHeight - canvas.height) / 2;
+      ctx.drawImage(canvas, 0, yOffset);
+      finalCanvas = newCanvas;
 
       finalCanvas.toBlob(
         (blob) => {
@@ -126,7 +126,7 @@ function App() {
           const url = URL.createObjectURL(blob);
           const link = document.createElement("a");
           link.href = url;
-          link.download = `browsing-insights-${currentSlide}-${type}.png`;
+          link.download = `web-wrapped${currentSlide}.png`;
           document.body.appendChild(link);
           link.click();
           document.body.removeChild(link);
@@ -154,6 +154,16 @@ function App() {
     }
   };
 
+  const calculateTimeSpent = () => {
+    const avgTimePerVisit = 5; // minutes
+    const totalMinutes = analytics?.totalVisits
+      ? analytics.totalVisits * avgTimePerVisit
+      : 0;
+    const days = Math.floor(totalMinutes / (24 * 60));
+    const hours = Math.floor((totalMinutes % (24 * 60)) / 60);
+    return { days, hours };
+  };
+
   if (!history.length) {
     return <LandingPage onFileUpload={handleFileUpload} />;
   }
@@ -173,30 +183,74 @@ function App() {
 
   const analytics = analyzeBrowsingHistory(history);
   const currentIndex = SLIDES.indexOf(currentSlide);
-
+  const timeSpent = calculateTimeSpent();
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600">
+    <div className="font-geist-mono min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 ">
       <div ref={slideRef}>
         <SlideContainer currentSlide={currentSlide}>
           {currentSlide === "overview" && (
-            <div className="text-center space-y-12 px-4">
-              <h2 className="text-5xl font-bold text-white mb-12">
+            <div className="px-4">
+              <h2 className="text-5xl font-bold text-white mb-12 text-center">
                 Your Year in Browsing
               </h2>
-              <div className="text-8xl font-bold text-white mb-4">
-                {analytics?.totalVisits || 0}
+              <div className="grid grid-cols-2 gap-8">
+                <div className="space-y-8">
+                  <div className="text-7xl font-bold text-white">
+                    {analytics?.totalVisits || 0}
+                    <p className="text-2xl text-white/80">web pages visited</p>
+                  </div>
+                  <div className="text-4xl font-bold text-white/90">
+                    {analytics?.uniqueDomains.toLocaleString()}
+                    <p className="text-xl text-white/80">
+                      unique websites explored
+                    </p>
+                  </div>
+                  <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.7 }}
+                    className="text-2xl text-white/90"
+                  >
+                    That's about {timeSpent.days} days and {timeSpent.hours}{" "}
+                    hours of browsing!
+                  </motion.div>
+                </div>
+
+                <div className="space-y-6">
+                  <h3 className="text-3xl font-bold text-white mb-6">
+                    Your Top Sites
+                  </h3>
+                  {analytics?.domainStats.slice(0, 3).map((site, index) => (
+                    <motion.div
+                      key={site.domain}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ duration: 0.5, delay: index * 0.1 }}
+                      className="bg-white/10 rounded-lg p-4 backdrop-blur-sm"
+                    >
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <span className="text-2xl font-bold text-white">
+                            #{index + 1}
+                          </span>
+                          <span className="ml-4 text-xl font-medium text-white">
+                            {site.domain}
+                          </span>
+                        </div>
+                        <span className="text-white/80 text-lg">
+                          {site.visits.toLocaleString()} visits
+                        </span>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
               </div>
-              <p className="text-2xl text-white/80">web pages visited</p>
-              <div className="text-4xl font-bold text-white/90 mt-8">
-                {analytics?.uniqueDomains.toLocaleString()}
-              </div>
-              <p className="text-xl text-white/80">unique websites explored</p>
             </div>
           )}
 
           {currentSlide === "topSites" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Top Destinations
               </h2>
               <WebsiteAnalytics stats={analytics?.domainStats || []} />
@@ -205,7 +259,7 @@ function App() {
 
           {currentSlide === "categories" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Internet Universe
               </h2>
               <CategoryChart stats={analytics?.categoryStats || []} />
@@ -213,8 +267,8 @@ function App() {
           )}
 
           {currentSlide === "patterns" && (
-            <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">
+            <div className="text-center space-y-2">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Daily Rhythms
               </h2>
               <TimePatterns stats={analytics?.timeStats || []} />
@@ -222,8 +276,8 @@ function App() {
           )}
 
           {currentSlide === "yearly" && (
-            <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">
+            <div className="text-center space-y-8 ">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Year at a Glance
               </h2>
               <YearlyHeatmap stats={analytics?.dailyStats || []} />
@@ -232,7 +286,7 @@ function App() {
 
           {currentSlide === "gems" && (
             <div className="text-center space-y-8">
-              <h2 className="text-4xl font-bold text-white mb-12">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Rediscover These Gems
               </h2>
               <HiddenGems

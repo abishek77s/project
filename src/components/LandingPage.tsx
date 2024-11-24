@@ -66,7 +66,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
                 />
               </label>
               <p className="text-sm text-white/70">
-                To get your history file , use this (
+                To get your history file (.csv) , use this (
                 <a
                   href="https://chromewebstore.google.com/detail/export-chrome-history/dihloblpkeiddiaojbagoecedbfpifdj"
                   target="_blank"
