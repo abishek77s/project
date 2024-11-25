@@ -94,16 +94,17 @@ function App() {
     if (!slideRef.current) return;
 
     try {
-      const scale = 3;
+      const scale = 3; // Only the mobile scale is used
       const canvas = await html2canvas(slideRef.current, {
         backgroundColor: null,
         scale,
         logging: false,
       });
 
-      const aspectRatio = 1.91;
+      const aspectRatio = 1.91; // Aspect ratio for mobile
       let finalCanvas = canvas;
 
+      // Adjust the canvas for mobile aspect ratio
       const newCanvas = document.createElement("canvas");
       const ctx = newCanvas.getContext("2d");
       if (!ctx) return;
@@ -154,7 +155,7 @@ function App() {
   };
 
   const calculateTimeSpent = () => {
-    const avgTimePerVisit = 4;
+    const avgTimePerVisit = 4; // minutes
     const totalMinutes = analytics?.totalVisits
       ? analytics.totalVisits * avgTimePerVisit
       : 0;
@@ -169,9 +170,9 @@ function App() {
 
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600" role="status" aria-live="polite">
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true" />
+          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" />
           <p className="text-2xl font-medium text-white">
             Creating Your Story...
           </p>
@@ -183,14 +184,9 @@ function App() {
   const analytics = analyzeBrowsingHistory(history);
   const currentIndex = SLIDES.indexOf(currentSlide);
   const timeSpent = calculateTimeSpent();
-
   return (
-    <div className="font-geist-mono min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600">
-      <header role="banner" className="sr-only">
-        <h1>Web Wrapped - Your Browsing History Analysis</h1>
-      </header>
-      
-      <main role="main" ref={slideRef}>
+    <div className="font-geist-mono min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 ">
+      <div ref={slideRef}>
         <SlideContainer currentSlide={currentSlide}>
           {currentSlide === "overview" && (
             <div className="px-4">
@@ -215,8 +211,8 @@ function App() {
                     transition={{ delay: 0.7 }}
                     className="text-2xl text-white/90"
                   >
-                    That's about {timeSpent.days} days and {timeSpent.hours} hours
-                    of browsing!
+                    That's about {timeSpent.days} days and {timeSpent.hours}{" "}
+                    hours of browsing!
                   </motion.div>
                 </div>
 
@@ -253,44 +249,44 @@ function App() {
           )}
 
           {currentSlide === "topSites" && (
-            <section aria-label="Top Sites Analysis">
-              <h2 className="text-4xl font-bold text-white mb-2 text-center">
+            <div className="text-center space-y-8">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Top Destinations
               </h2>
               <WebsiteAnalytics stats={analytics?.domainStats || []} />
-            </section>
+            </div>
           )}
 
           {currentSlide === "categories" && (
-            <section aria-label="Website Categories">
-              <h2 className="text-4xl font-bold text-white mb-2 text-center">
+            <div className="text-center space-y-8">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Internet Universe
               </h2>
               <CategoryChart stats={analytics?.categoryStats || []} />
-            </section>
+            </div>
           )}
 
           {currentSlide === "patterns" && (
-            <section aria-label="Time Patterns">
-              <h2 className="text-4xl font-bold text-white mb-2 text-center">
+            <div className="text-center space-y-2">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Daily Rhythms
               </h2>
               <TimePatterns stats={analytics?.timeStats || []} />
-            </section>
+            </div>
           )}
 
           {currentSlide === "yearly" && (
-            <section aria-label="Yearly Overview">
-              <h2 className="text-4xl font-bold text-white mb-2 text-center">
+            <div className="text-center space-y-8 ">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Your Year at a Glance
               </h2>
               <YearlyHeatmap stats={analytics?.dailyStats || []} />
-            </section>
+            </div>
           )}
 
           {currentSlide === "gems" && (
-            <section aria-label="Hidden Gems">
-              <h2 className="text-4xl font-bold text-white mb-2 text-center">
+            <div className="text-center space-y-8">
+              <h2 className="text-4xl font-bold text-white mb-2">
                 Rediscover These Gems
               </h2>
               <HiddenGems
@@ -300,10 +296,10 @@ function App() {
                     .slice(0, 5) || []
                 }
               />
-            </section>
+            </div>
           )}
         </SlideContainer>
-      </main>
+      </div>
 
       <NavigationControls
         currentSlide={currentSlide}
