@@ -155,7 +155,7 @@ function App() {
   };
 
   const calculateTimeSpent = () => {
-    const avgTimePerVisit = 5; // minutes
+    const avgTimePerVisit = 4; // minutes
     const totalMinutes = analytics?.totalVisits
       ? analytics.totalVisits * avgTimePerVisit
       : 0;
