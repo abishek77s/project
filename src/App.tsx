@@ -169,9 +169,16 @@ function App() {
 
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600" role="status" aria-live="polite">
+      <div
+        className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-600 to-purple-600"
+        role="status"
+        aria-live="polite"
+      >
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true" />
+          <div
+            className="w-16 h-16 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto mb-4"
+            aria-hidden="true"
+          />
           <p className="text-2xl font-medium text-white">
             Creating Your Story...
           </p>
@@ -189,7 +196,7 @@ function App() {
       <header role="banner" className="sr-only">
         <h1>Web Wrapped - Your Browsing History Analysis</h1>
       </header>
-      
+
       <main role="main" ref={slideRef}>
         <SlideContainer currentSlide={currentSlide}>
           {currentSlide === "overview" && (
@@ -215,8 +222,8 @@ function App() {
                     transition={{ delay: 0.7 }}
                     className="text-2xl text-white/90"
                   >
-                    That's about {timeSpent.days} days and {timeSpent.hours} hours
-                    of browsing!
+                    That's about {timeSpent.days} days and {timeSpent.hours}{" "}
+                    hours of browsing!
                   </motion.div>
                 </div>
 
