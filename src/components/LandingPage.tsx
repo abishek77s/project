@@ -8,12 +8,45 @@ import {
   PieChart,
   Calendar,
 } from "lucide-react";
+import Chrome from "../assets/Chromium.svg";
+import Edge from "../assets/Edge.svg";
+import Firefox from "../assets/Firefox.svg";
+import edge from "../assets/edge.png";
+import chromeEx from "../assets/chromeEx.png";
+import firefoxEx from "../assets/firefoxEx.png";
 
 interface LandingPageProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
+  const exportHelp = [
+    {
+      icon: Chrome,
+      title: "Chromium",
+      image: chromeEx,
+      description:
+        "Use this extension to export your browser history in CSV format on Chrome, Brave, Opera, and other Chromium-based browsers.",
+      link: "https://chromewebstore.google.com/detail/export-chrome-history/dihloblpkeiddiaojbagoecedbfpifdj",
+    },
+
+    {
+      icon: Firefox,
+      title: "Mozilla Firefox",
+      image: firefoxEx,
+      description:
+        "Firefox users, use the History Exporter by Web Wrapped in Firefox-Addons.",
+      link: "https://addons.mozilla.org/en-US/firefox/addon/history-exporter-web-wrapped/",
+    },
+
+    {
+      icon: Edge,
+      title: "Microsoft Edge",
+      image: edge,
+      description:
+        "Go to History or press CTRL+H > Click three dots > Click Export browsing data, then upload.",
+    },
+  ];
   const features = [
     {
       icon: Globe,
@@ -65,25 +98,47 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
                   className="hidden"
                 />
               </label>
-              <p className="text-sm text-white/70">
-                To get your history file (.csv) , use this (
-                <a
-                  href="https://chromewebstore.google.com/detail/export-chrome-history/dihloblpkeiddiaojbagoecedbfpifdj"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="underline hover:text-white"
-                >
-                  extension),
-                </a>{" "}
-                Microsoft Edge users can directly export their history from
-                settings.
-              </p>
+
+              <div>
+                <p className="text-sm text-white/70">
+                  Your privacy matters! All processing happens locally in your
+                  browser.
+                </p>
+                <p className="text-sm text-white/70">
+                  No data is ever uploaded or stored on any server.
+                </p>
+              </div>
             </div>
           </motion.div>
         </div>
 
+        {/* Export Help Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto py-2 mb-8">
+          {exportHelp.map((feature, index) => (
+            <motion.div
+              key={feature.title}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 + index * 0.1 }}
+              className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 items-center hover:bg-white/15 transition-colors"
+            >
+              <div className="flex gap-4 items-center">
+                <img src={feature.icon} className="size-10 mb-2" />
+                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
+              </div>
+              <img src={feature.image} />
+              <p className="text-white/70">{feature.description}</p>
+              {feature.link && (
+                <a href={feature.link} target="_blank">
+                  Get Extension
+                </a>
+              )}
+            </motion.div>
+          ))}
+        </div>
+
         {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-7xl mx-auto">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
@@ -106,12 +161,6 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center text-white/60 text-sm"
         >
-          <p>
-            Your privacy matters! All processing happens locally in your
-            browser.
-          </p>
-          <p>No data is ever uploaded or stored on any server.</p>
-
           <p className="m-5">Web Wrapped.</p>
         </motion.div>
       </div>
