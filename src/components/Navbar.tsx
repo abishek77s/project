@@ -8,28 +8,28 @@ const Navbar = () => {
         {/* Logo and Title */}
         <div className="flex items-center gap-4">
           <img src={ww} alt="Logo" className="h-10 w-10" />
-          <h1 className="font-medium text-xl">Web Wrapped</h1>
+          <h1 className="font-medium text-xl sm:hidden">Web Wrapped</h1>
         </div>
         
         {/* Links */}
-        <div className="flex gap-4 sm:gap-2">
+        <div className="flex gap-4">
           <a
             href="https://x.com/abi_dzn"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm sm:text-xs hover:bg-white/10"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm hover:bg-white/10"
           >
             <Twitter className="h-5 w-5" />
-            Message Me
+            <span className="hidden sm:inline">Message Me</span>
           </a>
           <a
             href="https://www.paypal.com/paypalme/abisheks7"
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm sm:text-xs hover:bg-white/10"
+            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm hover:bg-white/10"
           >
             <Heart className="h-5 w-5" />
-            Support
+            <span className="hidden sm:inline">Support</span>
           </a>
         </div>
       </div>
