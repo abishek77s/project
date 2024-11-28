@@ -141,6 +141,9 @@ function App() {
 
   const nextSlide = () => {
     const currentIndex = SLIDES.indexOf(currentSlide);
+    if (currentIndex === 5) {
+      setCurrentSlide(SLIDES[0]);
+    }
     if (currentIndex < SLIDES.length - 1) {
       setCurrentSlide(SLIDES[currentIndex + 1]);
     }
@@ -148,6 +151,9 @@ function App() {
 
   const prevSlide = () => {
     const currentIndex = SLIDES.indexOf(currentSlide);
+    if (currentIndex === 0) {
+      setCurrentSlide(SLIDES[5]);
+    }
     if (currentIndex > 0) {
       setCurrentSlide(SLIDES[currentIndex - 1]);
     }

@@ -8,7 +8,6 @@ interface HiddenGemsProps {
 }
 
 export const HiddenGems: React.FC<HiddenGemsProps> = ({ gems }) => {
-  console.log(gems.map((g) => g.domain));
   return (
     <div className="bg-white p-6 rounded-xl shadow-lg">
       <div className="flex items-center gap-2 mb-6">

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Download } from "lucide-react";
 
 interface NavigationControlsProps {
@@ -18,15 +18,24 @@ export const NavigationControls: React.FC<NavigationControlsProps> = ({
   onPrev,
   onDownload,
 }) => {
+  const [crossed, setCrossed] = useState(false);
+  useEffect(() => {
+    if (crossed === false) {
+      if (currentIndex === 5) {
+        setCrossed(true);
+      }
+    }
+  }, [currentSlide]);
+
   return (
     <nav role="navigation" aria-label="Slide Navigation">
       <div className="fixed inset-y-0 left-8 flex items-center">
         <button
           onClick={onPrev}
-          disabled={currentIndex === 0}
+          disabled={currentIndex === 0 && crossed === false}
           aria-label="Previous slide"
           className={`p-3 rounded-full transition-colors ${
-            currentIndex === 0
+            currentIndex === 0 && crossed === false
               ? "bg-white/20 text-white/40 cursor-not-allowed"
               : "bg-white/10 hover:bg-white/20 text-white"
           }`}
@@ -45,19 +54,21 @@ export const NavigationControls: React.FC<NavigationControlsProps> = ({
         </button>
         <button
           onClick={onNext}
-          disabled={currentIndex === totalSlides - 1}
           aria-label="Next slide"
-          className={`p-3 rounded-full transition-colors ${
-            currentIndex === totalSlides - 1
-              ? "bg-white/20 text-white/40 cursor-not-allowed"
-              : "bg-white/10 hover:bg-white/20 text-white"
-          }`}
+          className="p-3 rounded-full transition-colors bg-white/10 hover:bg-white/20 text-white"
         >
           <ArrowRight className="w-6 h-6" />
         </button>
       </div>
 
-      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-2" role="progressbar" aria-label="Slide progress" aria-valuenow={currentIndex + 1} aria-valuemin={1} aria-valuemax={totalSlides}>
+      <div
+        className="fixed bottom-8 left-1/2 -translate-x-1/2 flex gap-2"
+        role="progressbar"
+        aria-label="Slide progress"
+        aria-valuenow={currentIndex + 1}
+        aria-valuemin={1}
+        aria-valuemax={totalSlides}
+      >
         {Array.from({ length: totalSlides }).map((_, index) => (
           <div
             key={index}

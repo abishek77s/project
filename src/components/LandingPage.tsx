@@ -14,6 +14,7 @@ import Firefox from "../assets/Firefox.svg";
 import edge from "../assets/edge.png";
 import chromeEx from "../assets/chromeEx.png";
 import firefoxEx from "../assets/firefoxEx.png";
+import Navbar from "./Navbar";
 
 interface LandingPageProps {
   onFileUpload: (event: React.ChangeEvent<HTMLInputElement>) => void;
@@ -70,8 +71,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white">
-      <div className="max-w-6xl mx-auto px-4 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-indigo-600 to-purple-600 text-white ">
+      <Navbar />
+      <div className="max-w-6xl mx-auto px-4 py-12">
         {/* Hero Section */}
         <div className="text-center mb-16">
           <motion.div
@@ -193,7 +195,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
           transition={{ duration: 0.6, delay: 0.6 }}
           className="mt-16 text-center text-white/60 text-sm"
         >
-          <p className="m-5">Web Wrapped.</p>
+          <a
+            href="https://github.com/abishek77s/web-wrapped"
+            target="_blank"
+            className="m-5 font-semibold underline"
+          >
+            Check out on Github
+          </a>
         </motion.div>
       </div>
     </div>
