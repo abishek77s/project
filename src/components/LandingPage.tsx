@@ -198,7 +198,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onFileUpload }) => {
           <a
             href="https://github.com/abishek77s/web-wrapped"
             target="_blank"
-            className="m-5 font-semibold underline"
+            className="m-5 text-2xl font-semibold underline"
           >
             Check out on Github
           </a>
