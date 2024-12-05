@@ -8,9 +8,9 @@ const Navbar = () => {
         {/* Logo and Title */}
         <div className="flex items-center gap-4">
           <img src={ww} alt="Logo" className="h-10 w-10" />
-          <h1 className="font-medium text-xl sm:hidden">Web Wrapped</h1>
+          <h1 className="font-medium text-xl">Web Wrapped</h1>
         </div>
-        
+
         {/* Links */}
         <div className="flex gap-4">
           <a
